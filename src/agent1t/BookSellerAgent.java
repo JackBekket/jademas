@@ -31,8 +31,8 @@ package agent1t;
 			DFAgentDescription dfd = new DFAgentDescription();
 			dfd.setName(getAID());
 			ServiceDescription sd = new ServiceDescription();
-			sd.setType("book-selling");
-			sd.setName("JADE-book-trading");
+			sd.setType("stuff-selling");
+			sd.setName("JADE-stuff-trading");
 			dfd.addServices(sd);
 			try {
 				DFService.register(this, dfd);

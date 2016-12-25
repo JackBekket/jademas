@@ -24,6 +24,10 @@ import jade.lang.acl.ACLMessage;
 
 
 public class BookBuyerAgent extends Agent {
+	
+	
+	private AID[] sellerAgents;
+	
 	//Setup is analog to constuctor
 	protected void setup() {
 		// Printout a welcome message
@@ -31,21 +35,21 @@ public class BookBuyerAgent extends Agent {
 		// Get the title of the book to buy as a start-up argument
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
-		targetBookTitle = (String) args[0];
-		System.out.println("Trying to buy "+targetBookTitle);
+		targetStuffTitle = (String) args[0];
+		System.out.println("Trying to buy "+targetStuffTitle);
 		// Add a TickerBehaviour that schedules a request to seller agents every minute
 		addBehaviour(new TickerBehaviour(this, 60000) {
 			protected void onTick() {
-				System.out.println("Trying to buy "+targetBookTitle);
+				System.out.println("Trying to buy "+targetStuffTitle);
 				// Update the list of seller agents
 				DFAgentDescription template = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
-				sd.setType("book-selling");
+				sd.setType("stuff-selling");
 				template.addServices(sd);
 				try {
 					DFAgentDescription[] result = DFService.search(myAgent, template); 
 					System.out.println("Found the following seller agents:");
-					sellerAgents = new AID[result.length];
+			sellerAgents = new AID[result.length];
 					for (int i = 0; i < result.length; ++i) {
 						sellerAgents[i] = result[i].getName();
 						System.out.println(sellerAgents[i].getName());
@@ -62,15 +66,15 @@ public class BookBuyerAgent extends Agent {
 	}
 			else {
 			// Make the agent terminate
-			System.out.println("No target book title specified");
+			System.out.println("No target stuff title specified");
 			doDelete();
 			}
 			}
-	//The title of the book to buy
-	private String targetBookTitle;
+	//The title of the stuff to buy
+	private String targetStuffTitle;
 	// The list of known seller agents
-	private AID[] sellerAgents = {new AID("seller1", AID.ISLOCALNAME),
-	new AID("seller2", AID.ISLOCALNAME)};
+	//private AID[] sellerAgents = {new AID("seller1", AID.ISLOCALNAME),
+	//new AID("seller2", AID.ISLOCALNAME)};
 	
 	// Put agent clean-up operations here
 			protected void takeDown() {
@@ -106,12 +110,12 @@ public class BookBuyerAgent extends Agent {
 						for (int i = 0; i < sellerAgents.length; ++i) {
 							cfp.addReceiver(sellerAgents[i]);
 						} 
-						cfp.setContent(targetBookTitle);
-						cfp.setConversationId("book-trade");
+						cfp.setContent(targetStuffTitle);
+						cfp.setConversationId("stuff-trade");
 						cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
 						myAgent.send(cfp);
 						// Prepare the template to get proposals
-						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("book-trade"),
+						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
 						step = 1;
 						break;
@@ -143,12 +147,12 @@ public class BookBuyerAgent extends Agent {
 						// Send the purchase order to the seller that provided the best offer
 						ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 						order.addReceiver(bestSeller);
-						order.setContent(targetBookTitle);
-						order.setConversationId("book-trade");
+						order.setContent(targetStuffTitle);
+						order.setConversationId("stuff-trade");
 						order.setReplyWith("order"+System.currentTimeMillis());
 						myAgent.send(order);
 						// Prepare the template to get the purchase order reply
-						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("book-trade"),
+						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(order.getReplyWith()));
 						step = 3;
 						break;
@@ -159,7 +163,7 @@ public class BookBuyerAgent extends Agent {
 							// Purchase order reply received
 							if (reply.getPerformative() == ACLMessage.INFORM) {
 								// Purchase successful. We can terminate
-								System.out.println(targetBookTitle+" successfully purchased from agent "+reply.getSender().getName());
+								System.out.println(targetStuffTitle+" successfully purchased from agent "+reply.getSender().getName());
 								System.out.println("Price = "+bestPrice);
 								myAgent.doDelete();
 							}
@@ -178,7 +182,7 @@ public class BookBuyerAgent extends Agent {
 
 				public boolean done() {
 					if (step == 2 && bestSeller == null) {
-						System.out.println("Attempt failed: "+targetBookTitle+" not available for sale");
+						System.out.println("Attempt failed: "+targetStuffTitle+" not available for sale");
 					}
 					return ((step == 2 && bestSeller == null) || step == 4);
 				}

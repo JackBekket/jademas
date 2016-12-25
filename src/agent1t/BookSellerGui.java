@@ -79,15 +79,15 @@ class BookSellerGui extends JFrame {
 			}
 		} );
 		
-		setResizable(false);
+		setResizable(true);
 	}
 	
 	public void showGui() {
 		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int centerX = (int)screenSize.getWidth() / 2;
-		int centerY = (int)screenSize.getHeight() / 2;
-		setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
+		int centerX = (int)screenSize.getWidth() ;
+		int centerY = (int)screenSize.getHeight() ;
+		setLocation(centerX - getWidth() , centerY - getHeight() );
 		super.setVisible(true);
 	}	
 }
