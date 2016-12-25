@@ -30,21 +30,21 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
-  @author Giovanni Caire - TILAB
+  @author Ponomarev Sergey
  */
-class BookSellerGui extends JFrame {	
-	private BookSellerAgent myAgent;
+class SellerGui extends JFrame {	
+	private SellerAgent myAgent;
 	
 	private JTextField titleField, priceField;
 	
-	BookSellerGui(BookSellerAgent a) {
+	SellerGui(SellerAgent a) {
 		super(a.getLocalName());
 		
 		myAgent = a;
 		
 		JPanel p = new JPanel();
 		p.setLayout(new GridLayout(2, 2));
-		p.add(new JLabel("Book title:"));
+		p.add(new JLabel("Stuff title:"));
 		titleField = new JTextField(15);
 		p.add(titleField);
 		p.add(new JLabel("Price:"));
@@ -63,7 +63,7 @@ class BookSellerGui extends JFrame {
 					priceField.setText("");
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(BookSellerGui.this, "Invalid values. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+					JOptionPane.showMessageDialog(SellerGui.this, "Invalid values. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
 				}
 			}
 		} );

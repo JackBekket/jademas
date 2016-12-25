@@ -1,6 +1,8 @@
 package agent1t;
 
-
+/**
+@author Ponomarev Sergey
+*/
 
 	import jade.core.Agent;
 	import jade.core.behaviours.*;
@@ -14,17 +16,17 @@ package agent1t;
 	import jade.domain.FIPAAgentManagement.ServiceDescription;
 	
 	
-	public class BookSellerAgent extends Agent {
+	public class SellerAgent extends Agent {
 	// The catalogue of books for sale (maps the title of a book to its price)
 	private Hashtable catalogue;
 	// The GUI by means of which the user can add books in the catalogue
-	private BookSellerGui myGui;
+	private SellerGui myGui;
 	// Put agent initializations here
 	protected void setup() {
 	// Create the catalogue
 	catalogue = new Hashtable();
 	// Create and show the GUI
-	myGui = new BookSellerGui(this);
+	myGui = new SellerGui(this);
 	myGui.show();
 	
 	// Register the book-selling service in the yellow pages

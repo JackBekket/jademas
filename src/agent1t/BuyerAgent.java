@@ -23,7 +23,11 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 
 
-public class BookBuyerAgent extends Agent {
+public class BuyerAgent extends Agent {
+	
+	/**
+	  @author Ponomarev Sergey
+	 */
 	
 	
 	private AID[] sellerAgents;
