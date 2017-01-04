@@ -36,7 +36,7 @@ public class BuyerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Buyer-agent "+getAID().getName()+" is ready.");
-		// Get the title of the book to buy as a start-up argument
+		// Get the title of the stuff to buy as a start-up argument
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
 		targetStuffTitle = (String) args[0];
@@ -96,8 +96,8 @@ public class BuyerAgent extends Agent {
 			
 			/**
 			   Inner class RequestPerformer.
-			   This is the behaviour used by Book-buyer agents to request seller 
-			   agents the target book.
+			   This is the behaviour used by buyer agents to request seller 
+			   agents the target stuff.
 			 */
 			private class RequestPerformer extends Behaviour {
 				private AID bestSeller; // The agent who provides the best offer 
@@ -172,7 +172,7 @@ public class BuyerAgent extends Agent {
 								myAgent.doDelete();
 							}
 							else {
-								System.out.println("Attempt failed: requested book already sold.");
+								System.out.println("Attempt failed: requested stuff already sold.");
 							}
 
 							step = 4;

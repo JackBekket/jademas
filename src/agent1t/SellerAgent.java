@@ -17,11 +17,12 @@ package agent1t;
 	
 	
 	public class SellerAgent extends Agent {
-	// The catalogue of books for sale (maps the title of a book to its price)
+	// The catalogue of stuffs for sale (maps the title of a stuff to its price)
 	private Hashtable catalogue;
-	// The GUI by means of which the user can add books in the catalogue
+	// The GUI by means of which the user can add stuffs in the catalogue
 	private SellerGui myGui;
 	// Put agent initializations here
+	// setup = __construct !
 	protected void setup() {
 	// Create the catalogue
 	catalogue = new Hashtable();
@@ -29,7 +30,7 @@ package agent1t;
 	myGui = new SellerGui(this);
 	myGui.show();
 	
-	// Register the book-selling service in the yellow pages
+	// Register the stuff-selling service in the yellow pages
 			DFAgentDescription dfd = new DFAgentDescription();
 			dfd.setName(getAID());
 			ServiceDescription sd = new ServiceDescription();
@@ -72,7 +73,7 @@ package agent1t;
 		System.out.println("Seller-agent "+getAID().getName()+" terminating.");
 		}
 		/**
-		This is invoked by the GUI when the user adds a new book for sale
+		This is invoked by the GUI when the user adds a new stuff for sale
 		*/
 		public void updateCatalogue(final String title, final int price) {
 		addBehaviour(new OneShotBehaviour() {
@@ -84,9 +85,9 @@ package agent1t;
 		
 		/**
 		   Inner class OfferRequestsServer.
-		   This is the behaviour used by Book-seller agents to serve incoming requests 
+		   This is the behaviour used by seller agents to serve incoming requests 
 		   for offer from buyer agents.
-		   If the requested book is in the local catalogue the seller agent replies 
+		   If the requested stuff is in the local catalogue the seller agent replies 
 		   with a PROPOSE message specifying the price. Otherwise a REFUSE message is
 		   sent back.
 		 */
@@ -101,12 +102,12 @@ package agent1t;
 
 					Integer price = (Integer) catalogue.get(title);
 					if (price != null) {
-						// The requested book is available for sale. Reply with the price
+						// The requested stuff is available for sale. Reply with the price
 						reply.setPerformative(ACLMessage.PROPOSE);
 						reply.setContent(String.valueOf(price.intValue()));
 					}
 					else {
-						// The requested book is NOT available for sale.
+						// The requested stuff is NOT available for sale.
 						reply.setPerformative(ACLMessage.REFUSE);
 						reply.setContent("not-available");
 					}
@@ -120,9 +121,9 @@ package agent1t;
 		
 		/**
 		   Inner class PurchaseOrdersServer.
-		   This is the behaviour used by Book-seller agents to serve incoming 
+		   This is the behaviour used by seller agents to serve incoming 
 		   offer acceptances (i.e. purchase orders) from buyer agents.
-		   The seller agent removes the purchased book from its catalogue 
+		   The seller agent removes the purchased stuff from its catalogue 
 		   and replies with an INFORM message to notify the buyer that the
 		   purchase has been sucesfully completed.
 		 */
@@ -141,7 +142,7 @@ package agent1t;
 						System.out.println(title+" sold to agent "+msg.getSender().getName());
 					}
 					else {
-						// The requested book has been sold to another buyer in the meanwhile .
+						// The requested stuff has been sold to another buyer in the meanwhile .
 						reply.setPerformative(ACLMessage.FAILURE);
 						reply.setContent("not-available");
 					}
