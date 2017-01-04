@@ -116,6 +116,8 @@ public class BuyerAgent extends Agent {
 						} 
 						cfp.setContent(targetStuffTitle);
 						cfp.setConversationId("stuff-trade");
+						//Уникальное значение нужно, что бы различать сообщения от продавцов, т.к. они начинают диалоги с одинаковыми названиями
+						//Устаревшая хрень, но все равно занятно
 						cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
 						myAgent.send(cfp);
 						// Prepare the template to get proposals
