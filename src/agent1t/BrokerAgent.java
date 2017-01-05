@@ -9,6 +9,7 @@ import jade.core.AID;
 import jade.core.behaviours.*;
 import java.util.*;
 
+//import agent1t.SellerAgent.PurchaseOrdersServer;
 //import agent1t.SellerAgent.OfferRequestsServer;
 import jade.core.Agent;
 import jade.core.AID;
@@ -77,6 +78,12 @@ public class BrokerAgent extends Agent {
 
 				// Add the behaviour serving requests for offer from buyer agents
 				addBehaviour(new OfferRequestsServer1());
+				
+				//Add the bahavior for purchase
+				// Add the behaviour serving purchase orders from buyer agents
+				addBehaviour(new PurchaseOrdersServer1());
+				
+				
 				
 				// Perform the request
 			//	myAgent.addBehaviour(new RequestPerformer());
@@ -286,5 +293,45 @@ public class BrokerAgent extends Agent {
 					}
 				}
 			}  // End of inner class OfferRequestsServer
+		
+			
+			
+			/**
+			   Inner class PurchaseOrdersServer.
+			   This is the behaviour used by seller agents to serve incoming 
+			   offer acceptances (i.e. purchase orders) from buyer agents.
+			   The seller agent removes the purchased stuff from its catalogue 
+			   and replies with an INFORM message to notify the buyer that the
+			   purchase has been sucesfully completed.
+			 */
+			private class PurchaseOrdersServer1 extends CyclicBehaviour {
+				public void action() {
+					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
+					ACLMessage msg = myAgent.receive(mt);
+					if (msg != null) {
+						// ACCEPT_PROPOSAL Message received. Process it
+						String title = msg.getContent();
+						ACLMessage reply = msg.createReply();
+
+						Integer price = (Integer) catalogueBroker.remove(title);
+						if (price != null) {
+							reply.setPerformative(ACLMessage.INFORM);
+							System.out.println(title+" sold to agent "+msg.getSender().getName());
+						}
+						else {
+							// The requested stuff has been sold to another buyer in the meanwhile .
+							reply.setPerformative(ACLMessage.FAILURE);
+							reply.setContent("not-available");
+						}
+						myAgent.send(reply);
+					}
+					else {
+						block();
+					}
+				}
+			}  // End of inner class PurshaseOffersServer
+			
+			
+			
 			
 }
