@@ -8,7 +8,8 @@ import jade.core.AID;
 //import jade.core.Agent;
 import jade.core.behaviours.*;
 import java.util.*;
-import java.util.List;
+
+//import agent1t.SellerAgent.OfferRequestsServer;
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.*;
@@ -18,8 +19,6 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-
-import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 
 /**
@@ -37,12 +36,17 @@ public class BrokerAgent extends Agent {
 	//Setup is analog to constuctor
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hello! Buyer-agent "+getAID().getName()+" is ready.");
+		System.out.println("Hello! Broker-agent "+getAID().getName()+" is ready.");
+		
+		
+		// The parameters now is not an argument need to rewrite this
 		// Get the title of the stuff to buy as a start-up argument
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
 		targetStuffTitle = (String) args[0];
 		System.out.println("Trying to buy "+targetStuffTitle);
+		
+		
 		// Add a TickerBehaviour that schedules a request to seller agents every minute
 		addBehaviour(new TickerBehaviour(this, 60000) {
 			protected void onTick() {
@@ -67,6 +71,10 @@ public class BrokerAgent extends Agent {
 
 				// Perform the request
 				myAgent.addBehaviour(new RequestPerformer());
+				// Add the behaviour serving requests for offer from buyer agents
+				addBehaviour(new OfferRequestsServer1());
+				
+			
 			}
 		} );
 	}
@@ -81,6 +89,9 @@ public class BrokerAgent extends Agent {
 	// The list of known seller agents
 	//private AID[] sellerAgents = {new AID("seller1", AID.ISLOCALNAME),
 	//new AID("seller2", AID.ISLOCALNAME)};
+	
+	private Hashtable catalogue;
+	
 	
 	// Put agent clean-up operations here
 			protected void takeDown() {
@@ -144,6 +155,16 @@ public class BrokerAgent extends Agent {
 							repliesCnt++;
 							if (repliesCnt >= sellerAgents.length) {
 								// We received all replies
+								
+								
+								//Send reply to the buyer
+								if (bestPrice!=0){
+								reply.setPerformative(ACLMessage.PROPOSE);
+								reply.setContent(String.valueOf(bestPrice));
+								}
+								
+								
+								
 								step = 2; 
 							}
 						}
@@ -152,6 +173,12 @@ public class BrokerAgent extends Agent {
 						}
 						break;
 					case 2:
+						
+						//Send reply to the buyer with price
+						
+						
+						
+						/**
 						// Send the purchase order to the seller that provided the best offer
 						ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 						order.addReceiver(bestSeller);
@@ -163,6 +190,9 @@ public class BrokerAgent extends Agent {
 						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(order.getReplyWith()));
 						step = 3;
+						**/
+						
+						
 						break;
 					case 3:      
 						// Receive the purchase order reply
@@ -197,5 +227,47 @@ public class BrokerAgent extends Agent {
 			}  // End of inner class RequestPerformer
 				
 	
-	
+			/**
+			   Inner class OfferRequestsServer.
+			   This is the behaviour used by seller agents to serve incoming requests 
+			   for offer from buyer agents.
+			   If the requested stuff is in the local catalogue the seller agent replies 
+			   with a PROPOSE message specifying the price. Otherwise a REFUSE message is
+			   sent back.
+			   
+			   This class must recive messages from Buyer
+			 */
+			private class OfferRequestsServer1 extends CyclicBehaviour {
+				public void action() {
+					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+					ACLMessage msg = myAgent.receive(mt);
+					if (msg != null) {
+						// CFP Message received. Process it
+						String title = msg.getContent();
+						ACLMessage reply = msg.createReply();
+
+						targetStuffTitle = title;
+						
+						// Perform the request
+						myAgent.addBehaviour(new RequestPerformer());
+						
+						Integer price = (Integer) catalogue.get(title);
+						if (price != null) {
+							// The requested stuff is available for sale. Reply with the price
+							reply.setPerformative(ACLMessage.PROPOSE);
+							reply.setContent(String.valueOf(price.intValue()));
+						}
+						else {
+							// The requested stuff is NOT available for sale.
+							reply.setPerformative(ACLMessage.REFUSE);
+							reply.setContent("not-available");
+						}
+						myAgent.send(reply);
+					}
+					else {
+						block();
+					}
+				}
+			}  // End of inner class OfferRequestsServer
+			
 }
