@@ -39,18 +39,24 @@ public class BrokerAgent extends Agent {
 		System.out.println("Hello! Broker-agent "+getAID().getName()+" is ready.");
 		
 		
+		
 		// The parameters now is not an argument need to rewrite this
 		// Get the title of the stuff to buy as a start-up argument
+		
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
-		targetStuffTitle = (String) args[0];
-		System.out.println("Trying to buy "+targetStuffTitle);
+		//targetStuffTitle = (String) args[0];
+			rule= (Integer) args[0];
+			System.out.println("Overprice is "+rule);
+			
+	//	System.out.println("Trying to buy "+targetStuffTitle);
 		
 		
 		// Add a TickerBehaviour that schedules a request to seller agents every minute
 		addBehaviour(new TickerBehaviour(this, 60000) {
 			protected void onTick() {
-				System.out.println("Trying to buy "+targetStuffTitle);
+				
+			//	System.out.println("Trying to buy "+targetStuffTitle);
 				// Update the list of seller agents
 				DFAgentDescription template = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
@@ -69,10 +75,12 @@ public class BrokerAgent extends Agent {
 					fe.printStackTrace();
 				}
 
-				// Perform the request
-				myAgent.addBehaviour(new RequestPerformer());
 				// Add the behaviour serving requests for offer from buyer agents
 				addBehaviour(new OfferRequestsServer1());
+				
+				// Perform the request
+			//	myAgent.addBehaviour(new RequestPerformer());
+				
 				
 			
 			}
