@@ -9,6 +9,7 @@ import jade.core.AID;
 import jade.core.behaviours.*;
 import java.util.*;
 
+//import agent1t.BuyerAgent.RequestPerformer;
 //import agent1t.SellerAgent.PurchaseOrdersServer;
 //import agent1t.SellerAgent.OfferRequestsServer;
 import jade.core.Agent;
@@ -93,6 +94,12 @@ public class BrokerAgent extends Agent {
 				// Add the behaviour serving requests for offer from buyer agents
 				addBehaviour(new OfferRequestsServer1());
 				
+				// Perform the request
+				myAgent.addBehaviour(new RequestPerformer());
+				
+				// Add the behaviour serving requests for offer from buyer agents
+				addBehaviour(new OfferRequestsServer2());
+				
 				//Add the bahavior for purchase
 				// Add the behaviour serving purchase orders from buyer agents
 				addBehaviour(new PurchaseOrdersServer1());
@@ -123,6 +130,10 @@ public class BrokerAgent extends Agent {
 	
 	private Hashtable catalogueBroker;
 	
+	private String[] catBrok;
+	
+	private int[] catBrok2 = new int[1];
+	
 	
 	// Put agent clean-up operations here
 			protected void takeDown() {
@@ -150,7 +161,7 @@ public class BrokerAgent extends Agent {
 				private MessageTemplate mt; // The template to receive replies
 				private int step = 0;
 				private int ourPrice;
-				
+			
 
 				public void action() {
 					switch (step) {
@@ -184,7 +195,7 @@ public class BrokerAgent extends Agent {
 									// This is the best offer at present
 									bestPrice = price;
 									bestSeller = reply.getSender();
-									ourPrice=bestPrice + rule;
+								//	ourPrice=bestPrice + rule;
 								}
 							}
 							repliesCnt++;
@@ -239,9 +250,13 @@ public class BrokerAgent extends Agent {
 								// Purchase successful. 
 								System.out.println(targetStuffTitle+" successfully purchased from agent "+reply.getSender().getName());
 								System.out.println("Price = "+bestPrice);
-								ourPrice = bestPrice+rule;
+							//	ourPrice = bestPrice+rule;
+								
 								//Input it to our catalogue
-								catalogueBroker.put(targetStuffTitle, new Integer(ourPrice));
+							//	catalogueBroker.put(targetStuffTitle, ourPrice);
+								
+								catBrok2[0]=bestPrice;
+								
 								
 							//	myAgent.doDelete();
 							}
@@ -284,14 +299,39 @@ public class BrokerAgent extends Agent {
 					if (msg != null) {
 						// CFP Message received. Process it
 						String title = msg.getContent();
-						ACLMessage reply = msg.createReply();
+					//	ACLMessage reply = msg.createReply();
 
 						targetStuffTitle = title;
 						System.out.println("Name is" +targetStuffTitle);
-						// Perform the request
-						myAgent.addBehaviour(new RequestPerformer());
-						System.out.println("Sold is ok" +targetStuffTitle);
-						Integer price = (Integer) catalogueBroker.get(title);
+						
+					//	 myAgent.send(reply);
+					}
+					else {
+						block();
+					}
+				}
+			}  // End of inner class OfferRequestsServer
+		
+			
+			/**
+			   Inner class OfferRequestsServer.
+			   This is the behaviour used by seller agents to serve incoming requests 
+			   for offer from buyer agents.
+			   If the requested stuff is in the local catalogue the seller agent replies 
+			   with a PROPOSE message specifying the price. Otherwise a REFUSE message is
+			   sent back.
+			 */
+			private class OfferRequestsServer2 extends CyclicBehaviour {
+				public void action() {
+					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+					ACLMessage msg = myAgent.receive(mt);
+					if (msg != null) {
+						// CFP Message received. Process it
+						String title = msg.getContent();
+						ACLMessage reply = msg.createReply();
+
+						//Integer price = (Integer) catalogueBroker.get(title);
+						Integer price = catBrok2[0];
 						if (price != null) {
 							// The requested stuff is available for sale. Reply with the price
 							reply.setPerformative(ACLMessage.PROPOSE);
@@ -309,7 +349,6 @@ public class BrokerAgent extends Agent {
 					}
 				}
 			}  // End of inner class OfferRequestsServer
-		
 			
 			
 			/**
@@ -329,10 +368,12 @@ public class BrokerAgent extends Agent {
 						String title = msg.getContent();
 						ACLMessage reply = msg.createReply();
 
-						Integer price = (Integer) catalogueBroker.remove(title);
+					//	Integer price = (Integer) catalogueBroker.remove(title);
+						Integer price = catBrok2[0];
 						if (price != null) {
 							reply.setPerformative(ACLMessage.INFORM);
 							System.out.println(title+" sold to agent "+msg.getSender().getName());
+							catBrok2[0]=0;
 						}
 						else {
 							// The requested stuff has been sold to another buyer in the meanwhile .
