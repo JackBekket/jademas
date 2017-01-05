@@ -30,7 +30,7 @@ public class BuyerAgent extends Agent {
 	 */
 	
 	
-	private AID[] sellerAgents;
+	private AID[] brokerAgents;
 	
 	//Setup is analog to constuctor
 	protected void setup() {
@@ -48,15 +48,15 @@ public class BuyerAgent extends Agent {
 				// Update the list of seller agents
 				DFAgentDescription template = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
-				sd.setType("stuff-selling");
+				sd.setType("broker-selling");
 				template.addServices(sd);
 				try {
 					DFAgentDescription[] result = DFService.search(myAgent, template); 
 					System.out.println("Found the following seller agents:");
-			sellerAgents = new AID[result.length];
+			brokerAgents = new AID[result.length];
 					for (int i = 0; i < result.length; ++i) {
-						sellerAgents[i] = result[i].getName();
-						System.out.println(sellerAgents[i].getName());
+						brokerAgents[i] = result[i].getName();
+						System.out.println(brokerAgents[i].getName());
 					}
 				}
 				catch (FIPAException fe) {
@@ -77,7 +77,7 @@ public class BuyerAgent extends Agent {
 	//The title of the stuff to buy
 	private String targetStuffTitle;
 	// The list of known seller agents
-	//private AID[] sellerAgents = {new AID("seller1", AID.ISLOCALNAME),
+	//private AID[] brokerAgents = {new AID("seller1", AID.ISLOCALNAME),
 	//new AID("seller2", AID.ISLOCALNAME)};
 	
 	// Put agent clean-up operations here
@@ -111,8 +111,8 @@ public class BuyerAgent extends Agent {
 					case 0:
 						// Send the cfp to all sellers
 						ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
-						for (int i = 0; i < sellerAgents.length; ++i) {
-							cfp.addReceiver(sellerAgents[i]);
+						for (int i = 0; i < brokerAgents.length; ++i) {
+							cfp.addReceiver(brokerAgents[i]);
 						} 
 						cfp.setContent(targetStuffTitle);
 						cfp.setConversationId("stuff-trade");
@@ -140,7 +140,7 @@ public class BuyerAgent extends Agent {
 								}
 							}
 							repliesCnt++;
-							if (repliesCnt >= sellerAgents.length) {
+							if (repliesCnt >= brokerAgents.length) {
 								// We received all replies
 								step = 2; 
 							}

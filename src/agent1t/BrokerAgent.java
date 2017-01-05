@@ -39,7 +39,20 @@ public class BrokerAgent extends Agent {
 		// Printout a welcome message
 		System.out.println("Hello! Broker-agent "+getAID().getName()+" is ready.");
 		
-		
+		// Register the stuff-selling service in the yellow pages
+					DFAgentDescription dfd = new DFAgentDescription();
+					dfd.setName(getAID());
+					ServiceDescription sd = new ServiceDescription();
+					sd.setType("broker-selling");
+					sd.setName("JADE-broker-trading");
+					dfd.addServices(sd);
+					try {
+						DFService.register(this, dfd);
+					}
+					catch (FIPAException fe) {
+						fe.printStackTrace();
+					}
+					
 		
 		// The parameters now is not an argument need to rewrite this
 		// Get the title of the stuff to buy as a start-up argument
