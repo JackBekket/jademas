@@ -90,7 +90,9 @@ public class BrokerAgent extends Agent {
 	//private AID[] sellerAgents = {new AID("seller1", AID.ISLOCALNAME),
 	//new AID("seller2", AID.ISLOCALNAME)};
 	
-	private Hashtable catalogue;
+	private Integer rule;
+	
+	private Hashtable catalogueBroker;
 	
 	
 	// Put agent clean-up operations here
@@ -118,6 +120,8 @@ public class BrokerAgent extends Agent {
 				private int repliesCnt = 0; // The counter of replies from seller agents
 				private MessageTemplate mt; // The template to receive replies
 				private int step = 0;
+				private int ourPrice;
+				
 
 				public void action() {
 					switch (step) {
@@ -150,6 +154,7 @@ public class BrokerAgent extends Agent {
 									// This is the best offer at present
 									bestPrice = price;
 									bestSeller = reply.getSender();
+									ourPrice=bestPrice + rule;
 								}
 							}
 							repliesCnt++;
@@ -200,10 +205,14 @@ public class BrokerAgent extends Agent {
 						if (reply != null) {
 							// Purchase order reply received
 							if (reply.getPerformative() == ACLMessage.INFORM) {
-								// Purchase successful. We can terminate
+								// Purchase successful. 
 								System.out.println(targetStuffTitle+" successfully purchased from agent "+reply.getSender().getName());
 								System.out.println("Price = "+bestPrice);
-								myAgent.doDelete();
+								
+								//Input it to our catalogue
+								catalogueBroker.put(targetStuffTitle, new Integer(ourPrice));
+								
+							//	myAgent.doDelete();
 							}
 							else {
 								System.out.println("Attempt failed: requested stuff already sold.");
@@ -251,7 +260,7 @@ public class BrokerAgent extends Agent {
 						// Perform the request
 						myAgent.addBehaviour(new RequestPerformer());
 						
-						Integer price = (Integer) catalogue.get(title);
+						Integer price = (Integer) catalogueBroker.get(title);
 						if (price != null) {
 							// The requested stuff is available for sale. Reply with the price
 							reply.setPerformative(ACLMessage.PROPOSE);
