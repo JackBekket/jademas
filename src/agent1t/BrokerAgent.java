@@ -156,13 +156,13 @@ public class BrokerAgent extends Agent {
 							if (repliesCnt >= sellerAgents.length) {
 								// We received all replies
 								
-								
+								/**
 								//Send reply to the buyer
 								if (bestPrice!=0){
 								reply.setPerformative(ACLMessage.PROPOSE);
 								reply.setContent(String.valueOf(bestPrice));
 								}
-								
+								**/
 								
 								
 								step = 2; 
@@ -178,7 +178,7 @@ public class BrokerAgent extends Agent {
 						
 						
 						
-						/**
+						
 						// Send the purchase order to the seller that provided the best offer
 						ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 						order.addReceiver(bestSeller);
@@ -190,7 +190,7 @@ public class BrokerAgent extends Agent {
 						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(order.getReplyWith()));
 						step = 3;
-						**/
+						
 						
 						
 						break;
