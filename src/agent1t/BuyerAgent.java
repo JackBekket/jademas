@@ -42,7 +42,7 @@ public class BuyerAgent extends Agent {
 		targetStuffTitle = (String) args[0];
 		System.out.println("Trying to buy "+targetStuffTitle);
 		// Add a TickerBehaviour that schedules a request to seller agents every minute
-		addBehaviour(new TickerBehaviour(this, 60000) {
+		addBehaviour(new TickerBehaviour(this, 30000) {
 			protected void onTick() {
 				System.out.println("Trying to buy "+targetStuffTitle);
 				// Update the list of seller agents
@@ -115,7 +115,7 @@ public class BuyerAgent extends Agent {
 							cfp.addReceiver(brokerAgents[i]);
 						} 
 						cfp.setContent(targetStuffTitle);
-						cfp.setConversationId("stuff-trade");
+						cfp.setConversationId("broker-trade");
 						//Уникальное значение нужно, что бы различать сообщения от продавцов, т.к. они начинают диалоги с одинаковыми названиями
 						//Устаревшая хрень, но все равно занятно
 						cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
@@ -154,7 +154,7 @@ public class BuyerAgent extends Agent {
 						ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 						order.addReceiver(bestSeller);
 						order.setContent(targetStuffTitle);
-						order.setConversationId("stuff-trade");
+						order.setConversationId("broker-trade");
 						order.setReplyWith("order"+System.currentTimeMillis());
 						myAgent.send(order);
 						// Prepare the template to get the purchase order reply

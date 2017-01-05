@@ -58,16 +58,17 @@ public class BrokerAgent extends Agent {
 		// Get the title of the stuff to buy as a start-up argument
 		
 		Object[] args = getArguments();
-		if (args != null && args.length > 0) {
+	//	if (args != null && args.length > 0) {
 		//targetStuffTitle = (String) args[0];
-			rule= (Integer) args[0];
+		//	rule= (Integer) args[0];
+			rule = 10;
 			System.out.println("Overprice is "+rule);
 			
 	//	System.out.println("Trying to buy "+targetStuffTitle);
 		
 		
 		// Add a TickerBehaviour that schedules a request to seller agents every minute
-		addBehaviour(new TickerBehaviour(this, 60000) {
+		addBehaviour(new TickerBehaviour(this, 30000) {
 			protected void onTick() {
 				
 			//	System.out.println("Trying to buy "+targetStuffTitle);
@@ -106,12 +107,12 @@ public class BrokerAgent extends Agent {
 			}
 		} );
 	}
-			else {
+		//	else {
 			// Make the agent terminate
-			System.out.println("No target stuff title specified");
-			doDelete();
-			}
-			}
+		//	System.out.println("No target stuff title specified");
+		//	doDelete();
+		//	}
+			//}
 	//The title of the stuff to buy
 	private String targetStuffTitle;
 	// The list of known seller agents
@@ -168,6 +169,7 @@ public class BrokerAgent extends Agent {
 						// Prepare the template to get proposals
 						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
+						System.out.println("RequestPerformer init");
 						step = 1;
 						break;
 					case 1:
@@ -197,7 +199,7 @@ public class BrokerAgent extends Agent {
 								}
 								**/
 								
-								
+								System.out.println("Recived all replies");
 								step = 2; 
 							}
 						}
@@ -222,6 +224,7 @@ public class BrokerAgent extends Agent {
 						// Prepare the template to get the purchase order reply
 						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(order.getReplyWith()));
+						System.out.println("Purchase order to seller is sent");
 						step = 3;
 						
 						
@@ -236,7 +239,7 @@ public class BrokerAgent extends Agent {
 								// Purchase successful. 
 								System.out.println(targetStuffTitle+" successfully purchased from agent "+reply.getSender().getName());
 								System.out.println("Price = "+bestPrice);
-								
+								ourPrice = bestPrice+rule;
 								//Input it to our catalogue
 								catalogueBroker.put(targetStuffTitle, new Integer(ourPrice));
 								
@@ -284,10 +287,10 @@ public class BrokerAgent extends Agent {
 						ACLMessage reply = msg.createReply();
 
 						targetStuffTitle = title;
-						
+						System.out.println("Name is" +targetStuffTitle);
 						// Perform the request
 						myAgent.addBehaviour(new RequestPerformer());
-						
+						System.out.println("Sold is ok" +targetStuffTitle);
 						Integer price = (Integer) catalogueBroker.get(title);
 						if (price != null) {
 							// The requested stuff is available for sale. Reply with the price
