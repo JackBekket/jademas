@@ -160,7 +160,7 @@ public class BrokerAgent extends Agent {
 				private int repliesCnt = 0; // The counter of replies from seller agents
 				private MessageTemplate mt; // The template to receive replies
 				private int step = 0;
-				private int ourPrice;
+				private int ourPrice = 10;
 			
 
 				public void action() {
@@ -248,14 +248,16 @@ public class BrokerAgent extends Agent {
 							// Purchase order reply received
 							if (reply.getPerformative() == ACLMessage.INFORM) {
 								// Purchase successful. 
+								catBrok2[0]=bestPrice+ourPrice;
+								
 								System.out.println(targetStuffTitle+" successfully purchased from agent "+reply.getSender().getName());
-								System.out.println("Price = "+bestPrice);
+								System.out.println("Price = "+catBrok2[0]);
 							//	ourPrice = bestPrice+rule;
 								
 								//Input it to our catalogue
 							//	catalogueBroker.put(targetStuffTitle, ourPrice);
 								
-								catBrok2[0]=bestPrice;
+								
 								
 								
 							//	myAgent.doDelete();
