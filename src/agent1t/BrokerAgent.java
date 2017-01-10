@@ -92,17 +92,17 @@ public class BrokerAgent extends Agent {
 				}
 
 				// Add the behaviour serving requests for offer from buyer agents
-				addBehaviour(new OfferRequestsServer1());
+				myAgent.addBehaviour(new OfferRequestsServer1());
 				
 				// Perform the request
 				myAgent.addBehaviour(new RequestPerformer());
 				
 				// Add the behaviour serving requests for offer from buyer agents
-				addBehaviour(new OfferRequestsServer2());
+				myAgent.addBehaviour(new OfferRequestsServer2());
 				
 				//Add the bahavior for purchase
 				// Add the behaviour serving purchase orders from buyer agents
-				addBehaviour(new PurchaseOrdersServer1());
+				myAgent.addBehaviour(new PurchaseOrdersServer1());
 				
 				
 				
@@ -250,8 +250,13 @@ public class BrokerAgent extends Agent {
 								// Purchase successful. 
 								catBrok2[0]=bestPrice+ourPrice;
 								
+								
 								System.out.println(targetStuffTitle+" successfully purchased from agent "+reply.getSender().getName());
-								System.out.println("Price = "+catBrok2[0]);
+								System.out.println("Broker buyed stuff for price="+bestPrice);
+							
+								System.out.println("Buyer buyed stuff from broker for = "+catBrok2[0]);
+								
+								//System.out.println("Price = "+catBrok2[0]);
 							//	ourPrice = bestPrice+rule;
 								
 								//Input it to our catalogue
