@@ -180,7 +180,7 @@ public class BrokerAgent extends Agent {
 						// Prepare the template to get proposals
 						mt = MessageTemplate.and(MessageTemplate.MatchConversationId("stuff-trade"),
 								MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
-						System.out.println("RequestPerformer init");
+					//	System.out.println("RequestPerformer init");
 						step = 1;
 						break;
 					case 1:
@@ -210,7 +210,7 @@ public class BrokerAgent extends Agent {
 								}
 								**/
 								
-								System.out.println("Recived all replies");
+							//	System.out.println("Recived all replies");
 								step = 2; 
 							}
 						}
@@ -302,7 +302,7 @@ public class BrokerAgent extends Agent {
 					//	ACLMessage reply = msg.createReply();
 
 						targetStuffTitle = title;
-						System.out.println("Name is" +targetStuffTitle);
+					//	System.out.println("Name is" +targetStuffTitle);
 						
 					//	 myAgent.send(reply);
 					}
